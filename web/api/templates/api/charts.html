@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById("myChart").getContext("2d");
+  async function getData() {
+    const api_url = "http://localhost:8000/api/list";
+    const response = await fetch(api_url);
+    const data = await response.json();
+    let hum = [];
+    let temp = [];
+    let time = [];
+    await data.forEach((element) => {
+      hum.push(element.hum);
+      temp.push(element.temp);
+      time.push(element.time);
+    });
+    return { hum: hum, temp: temp, time: time };
+  }
+  async function setChart() {
+    const data = await getData();
+    const myChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.time,
+        datasets: [
+          {
+            data: data.hum,
+            borderColor: "rgba(150,255,150,1)",
+          },
+          {
+            data: data.temp,
+            borderColor: "rgba(255,150,150,1)",
+          },
+        ],
+      },
+    });
+  }
+  setChart();
+</script>
