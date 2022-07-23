@@ -1,0 +1,4 @@
+docker build --tag fungita-website .
+docker save -o /home/jo/Desktop/image.tar fungita-website
+docker load -i /home/jo/Desktop/image.tar
+docker run --publish 80:8000 fungita-website

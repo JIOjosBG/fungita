@@ -14,8 +14,12 @@
 
 <script>
   const ctx = document.getElementById("myChart").getContext("2d");
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   async function getData() {
-    const api_url = "http://localhost:8000/api/list";
+    const api_url = "http://localhost:80/api/list";
     const response = await fetch(api_url);
     const data = await response.json();
     let hum = [];
@@ -28,24 +32,36 @@
     });
     return { hum: hum, temp: temp, time: time };
   }
+  const myChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          borderColor: "rgba(150,255,150,1)",
+        },
+        {
+          data: [],
+          borderColor: "rgba(255,150,150,1)",
+        },
+      ],
+    },
+  });
+
   async function setChart() {
     const data = await getData();
-    const myChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: data.time,
-        datasets: [
-          {
-            data: data.hum,
-            borderColor: "rgba(150,255,150,1)",
-          },
-          {
-            data: data.temp,
-            borderColor: "rgba(255,150,150,1)",
-          },
-        ],
-      },
-    });
+    myChart.data.labels = data.time;
+    myChart.data.datasets[0].data = data.hum;
+    myChart.data.datasets[1].data = data.temp;
+    myChart.update();
   }
-  setChart();
+  async function cycle() {
+    while (1) {
+      console.log("update");
+      setChart();
+      await sleep(5000);
+    }
+  }
+  cycle();
 </script>

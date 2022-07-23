@@ -1,6 +1,6 @@
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include "DHT.h"
-#include "ArduinoJson.h"
+//#include "ArduinoJson.h"
 #include "HTTPClient.h"
 
 #define DHTPIN 4
@@ -35,13 +35,13 @@ void setup() {
 void loop() {
     DHT dht(DHTPIN, DHTTYPE);
     dht.begin();
+    delay(10000);
     float t = dht.readTemperature();     // read temperature
     float h = dht.readHumidity();
     Serial.print("\nHumidity: ");
     Serial.print(h);
-    Serial.print("\n%  Temperature: ");
+    Serial.print("%  \nTemperature: ");
     Serial.print(t);
-    delay(10000);
       HTTPClient http;
       http.begin("http://192.168.0.107:8000/api/add/");
       http.addHeader("Content-Type","application/json");
