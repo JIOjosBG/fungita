@@ -6,3 +6,5 @@ class Measurement(models.Model):
     hum = models.FloatField(default=-1)
     temp = models.FloatField(default=-1)
     time = models.DateTimeField(default=timezone.now())
+    farm = models.IntegerField(default=3)
+

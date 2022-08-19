@@ -5,5 +5,5 @@ from api.models import Measurement
 class MeasurementSerializer(serializers.ModelSerializer):
    class Meta:
        model = Measurement
-       fields = ('hum', 'temp', 'time')
+       fields = ('hum', 'temp', 'time','farm')
 

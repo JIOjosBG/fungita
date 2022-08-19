@@ -7,32 +7,64 @@
     <title>Document</title>
   </head>
   <body>
-    <canvas id="myChart" width="400" height="400"></canvas>
+    <canvas id="myChart1" width="3" height="1"></canvas>
+    <canvas id="myChart2" width="3" height="1"></canvas>
   </body>
 </html>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  const ctx = document.getElementById("myChart").getContext("2d");
+  const ctx1 = document.getElementById("myChart1").getContext("2d");
+  const ctx2 = document.getElementById("myChart2").getContext("2d");
+
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async function getData() {
-    const api_url = "http://localhost:80/api/list";
+    const api_url = "http://localhost/api/list";
     const response = await fetch(api_url);
     const data = await response.json();
-    let hum = [];
-    let temp = [];
-    let time = [];
+    let hum1 = [];
+    let temp1 = [];
+    let time1 = [];
+    let hum2 = [];
+    let temp2 = [];
+    let time2 = [];
     await data.forEach((element) => {
-      hum.push(element.hum);
-      temp.push(element.temp);
-      time.push(element.time);
+      if (element.farm == 1) {
+        hum1.push(element.hum);
+        temp1.push(element.temp);
+        time1.push(element.time);
+      } else if (element.farm == 2) {
+        hum2.push(element.hum);
+        temp2.push(element.temp);
+        time2.push(element.time);
+      }
     });
-    return { hum: hum, temp: temp, time: time };
+    return [
+      { hum: hum1, temp: temp1, time: time1 },
+      { hum: hum2, temp: temp2, time: time2 },
+    ];
   }
-  const myChart = new Chart(ctx, {
+  const myChart1 = new Chart(ctx1, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          borderColor: "rgba(150,255,150,1)",
+        },
+        {
+          data: [],
+          borderColor: "rgba(255,150,150,1)",
+        },
+      ],
+    },
+  });
+
+  const myChart2 = new Chart(ctx2, {
     type: "line",
     data: {
       labels: [],
@@ -51,10 +83,15 @@
 
   async function setChart() {
     const data = await getData();
-    myChart.data.labels = data.time;
-    myChart.data.datasets[0].data = data.hum;
-    myChart.data.datasets[1].data = data.temp;
-    myChart.update();
+    myChart1.data.labels = data[0].time;
+    myChart1.data.datasets[0].data = data[0].hum;
+    myChart1.data.datasets[1].data = data[0].temp;
+    myChart1.update();
+
+    myChart2.data.labels = data[1].time;
+    myChart2.data.datasets[0].data = data[1].hum;
+    myChart2.data.datasets[1].data = data[1].temp;
+    myChart2.update();
   }
   async function cycle() {
     while (1) {
