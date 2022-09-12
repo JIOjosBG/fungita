@@ -22,7 +22,7 @@
   }
 
   async function getData() {
-    const api_url = "http://127.0.0.1:80/api/list";
+    const api_url = "http://127.0.0.1:80/api/latests";
     const response = await fetch(api_url);
     const data = await response.json();
     let hum1 = [];
